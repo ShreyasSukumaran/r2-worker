@@ -5,5 +5,8 @@ compatibility_date = "2024-08-06"
 compatibility_flags = ["nodejs_compat"]
 
 [[r2_buckets]]
-binding = 'MY_BUCKET' # <~ valid JavaScript variable name
+binding = 'MY_BUCKET'
 bucket_name = 'haute-couture-store'
+
+[vars]
+AUTH_KEY_SECRET = "TeslaEnergy@1598"

@@ -28,15 +28,24 @@ export default {
 	async fetch(request, env, ctx) {
 		const url = new URL(request.url);
 		const key = url.pathname.slice(1);
-
 		if (!authorizeRequest(request, env, key)) {
 			return new Response('Forbidden', { status: 403 });
 		}
-
+		
 		switch (request.method) {
 			case 'PUT':
-				await env.MY_BUCKET.put(key, request.body);
-				return new Response(`Put ${key} successfully!`);
+				try {
+					const contentType = request.headers.get('Content-Type') || 'application/octet-stream';
+					const filename = request.headers.get('filename');
+					await env.MY_BUCKET.put(filename, request.body, {
+						httpMetadata: {
+						  contentType: contentType,
+						},
+					});
+					return new Response(`Uploaded ${filename} successfully!`);
+				} catch (error) {
+					return new Response('On upload error occurred.\n Error : '.error);
+				}
 			case 'GET':
 				const object = await env.MY_BUCKET.get(key);
 
