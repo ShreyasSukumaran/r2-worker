@@ -1,10 +1,10 @@
 const hasValidHeader = (request, env) => {
-	if (allowedUrls.includes(request.headers.get('origin'))) {
+	if (allowedUrls.includes(request.headers.get('referer'))) {
 		return request.headers.get('X-Custom-Auth-Key') === env.AUTH_KEY_SECRET;
 	} else return false
 };
 
-const allowedUrls = ['http://localhost:5173', 'https://mw-store.site', 'https://mw-store.netlify.app'];
+const allowedUrls = ['http://localhost:5173/', 'https://mw-store.site/', 'https://mw-store.netlify.app/'];
 
 function authorizeRequest(request, env, key) {
 	switch (request.method) {
@@ -13,7 +13,7 @@ function authorizeRequest(request, env, key) {
 			return hasValidHeader(request, env);
 		case 'OPTIONS':
 		case 'GET':
-			return allowedUrls.includes(request.headers.get('origin'));
+			return allowedUrls.includes(request.headers.get('referer'));
 		default:
 			return false;
 	}
@@ -48,9 +48,9 @@ export default {
 
 					addCorsHeaders(headers);
 
-					return new Response(JSON.stringify({ status: 200, message: `Uploaded ${filename} successfully!` }), { status: 200, headers });
+					return new Response(JSON.stringify({ status: 200, isUploaded: true, message: `Uploaded ${filename} successfully!` }), { status: 200, headers });
 				} catch (error) {
-					return new Response('On upload error occurred.\n Error : '.error);
+					return new Response(JSON.stringify({ status: 500, isUploaded: false, message: `On upload error occurred.\n Error : ${error}, Please try again later` }), { status: 500, headers });
 				}
 			case 'GET':
 				const object = await env.MY_BUCKET.get(key);
