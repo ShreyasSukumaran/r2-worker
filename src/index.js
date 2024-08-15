@@ -1,5 +1,7 @@
 const hasValidHeader = (request, env) => {
-	return request.headers.get('X-Custom-Auth-Key') === env.AUTH_KEY_SECRET;
+	if (allowedUrls.includes(request.headers.get('origin'))) {
+		return request.headers.get('X-Custom-Auth-Key') === env.AUTH_KEY_SECRET;
+	} else return false
 };
 
 const allowedUrls = ['http://localhost:5173', 'https://mw-store.site', 'https://mw-store.netlify.app'];
